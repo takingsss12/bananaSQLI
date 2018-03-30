@@ -236,12 +236,12 @@ public class BananaTest {
                 .append("---------")
                 .toString();
         assertThat(map.draw(), equalTo(expectedMap));
-        banana.move("1");// daemon cant move because he's frozen
+        banana.move("1");
         expectedMap = new StringBuilder()
                 .append("---------").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
-                .append("|O      |").append(LINE_SEPARATOR)
+                .append("|O       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
