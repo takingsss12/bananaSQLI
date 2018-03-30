@@ -197,7 +197,7 @@ public class BananaTest {
     public void enhancerAndFreezer() {
         Map map = new MapBuilder("7,7").freezer("5-1").enhancer("4-1").deamon("1,1").build();
         Banana banana = new Banana(map, "7,1");
-        expectedMap = new StringBuilder()
+        String expectedMap = new StringBuilder()
                 .append("---------").append(LINE_SEPARATOR)
                 .append("|X      |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
