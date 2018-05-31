@@ -65,7 +65,7 @@ final class MapCoordinatesRange
   
   static MapCoordinatesRange ofVerticalFence(final String verticalFence)
   {
-    final List<String> groups = matcherGroupsToList(Pattern.compile("(\\d+),(\\d+)-(\\d+)").matcher(verticalFence));
+    final List<String> groups = matcherGroupsToList(Pattern.compile("(\\d+)-(\\d+),(\\d+)").matcher(verticalFence));
     
     return of(String.format("%s-%s,%s-%s", groups.get(0), groups.get(1), groups.get(2), groups.get(2)));
   }

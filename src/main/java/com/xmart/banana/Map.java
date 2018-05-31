@@ -3,7 +3,6 @@ package com.xmart.banana;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 final class Map
 {
@@ -11,21 +10,14 @@ final class Map
   
   private final MapSlot[][] slots;
   
-  Map(final MapCoordinatesRange mapSize)
+  Map(final MapSlot[][] slots)
   {
-    final int columns = mapSize.getRightRange().iterator().next();
-    
-    slots = IntStream.range(0, mapSize.getLeftRange().iterator().next())
-        .mapToObj(row ->
-          IntStream.range(0, columns)
-            .mapToObj(__ -> new MapSlot())
-            .toArray(MapSlot[]::new))
-        .toArray(MapSlot[][]::new);
+    this.slots = slots;
   }
   
   String draw()
   {
-    final String borders = String.join("", Collections.nCopies(slots[0].length, "-"));
+    final String borders = String.join("", Collections.nCopies(slots[0].length + 2, "-"));
 
     return String.format("%s%s%s%s%s", borders, LINE_SEPARATOR, Arrays.stream(slots)
         .map(row -> String.format("|%s|", Arrays.stream(row)
