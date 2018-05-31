@@ -2,14 +2,18 @@ package com.xmart.banana;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
+import java.util.function.ToIntBiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 final class MapCoordinatesRange
 {
@@ -119,5 +123,21 @@ final class MapCoordinatesRange
   Iterable<Integer> getRightRange()
   {
     return rightRange;
+  }
+  
+  boolean isWithin(final int rows, final int columns)
+  {
+    ToIntBiFunction<Iterable<Integer>, BiFunction<Stream<Integer>, Comparator<Integer>, Optional<Integer>>> boundaryElement = (
+        iterable, operation) -> operation
+            .apply(StreamSupport.stream(iterable.spliterator(), false), Comparator.naturalOrder())
+            .get();
+
+    final boolean validRows = boundaryElement.applyAsInt(getLeftRange(), Stream::min) >= 0
+        && boundaryElement.applyAsInt(getLeftRange(), Stream::max) <= rows;
+
+    final boolean validColumns = boundaryElement.applyAsInt(getRightRange(), Stream::min) >= 0
+        && boundaryElement.applyAsInt(getRightRange(), Stream::max) <= columns;
+
+    return validRows && validColumns;
   }
 }

@@ -19,8 +19,23 @@ final class Map
     this.mapCoordinatesPositionHandler = mapCoordinatesPositionHandler;
   }
   
-  void banana(final Banana banana, final MapCoordinatesRange position)
+  private int rows()
   {
+    return slots.length;
+  }
+  
+  private int columns()
+  {
+    return slots[0].length;
+  }
+  
+  void banana(final Banana banana, final MapCoordinatesRange position) throws FenceExeption, OutOfBoundsExeption
+  {
+    if (!position.isWithin(rows(), columns()))
+    {
+      throw new OutOfBoundsExeption();
+    }
+    
     slots[position.getLeftRange().iterator().next() - 1][position.getRightRange().iterator().next() - 1].banana(banana);
   }
   
@@ -31,7 +46,7 @@ final class Map
   
   String draw()
   {
-    final String borders = String.join("", Collections.nCopies(slots[0].length + 2, "-"));
+    final String borders = String.join("", Collections.nCopies(columns() + 2, "-"));
 
     return String.format("%s%s%s%s%s", borders, LINE_SEPARATOR, Arrays.stream(slots)
         .map(row -> String.format("|%s|", Arrays.stream(row)

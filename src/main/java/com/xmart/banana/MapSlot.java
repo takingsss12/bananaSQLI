@@ -20,8 +20,13 @@ final class MapSlot
     this.fence = Optional.of(fence);
   }
   
-  void banana(final Banana banana)
+  void banana(final Banana banana) throws FenceExeption
   {
+    if (fence.isPresent())
+    {
+      throw new FenceExeption();
+    }
+    
     this.banana = Optional.of(banana);
   }
   

@@ -18,10 +18,17 @@ final class Banana
     
     this.map.getMapCoordinatesPositionHandler().setCurrentDirection(currentDirection);
     
-    this.map.banana(this, currentPosition);
+    try
+    {
+      this.map.banana(this, currentPosition);
+    }
+    catch (final Exception exception)
+    {
+      
+    }
   }
   
-  void move(final String step)
+  void move(final String step) throws FenceExeption, OutOfBoundsExeption
   {
     map.clear(currentPosition);
     

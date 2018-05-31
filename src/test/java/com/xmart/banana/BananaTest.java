@@ -4,7 +4,6 @@ import static com.xmart.banana.Map.LINE_SEPARATOR;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class BananaTest {
@@ -95,7 +94,6 @@ public class BananaTest {
     }
 
     @Test(expected = FenceExeption.class)
-    @Ignore
     public void bananaCanTMoveThrowFence() throws Exception {
         Map map = new MapBuilder("5,5").horizontalFence("1,2-4").verticalFence("3-5,2").build();
         Banana banana = new Banana(map, "4,3");
@@ -103,7 +101,6 @@ public class BananaTest {
         banana.move("3");
     }
     @Test(expected = OutOfBoundsExeption.class)
-    @Ignore
     public void bananaCanTMoveOutOfMap() throws Exception {
         Map map = new MapBuilder("5,5").horizontalFence("1,2-4").verticalFence("3-5,2").build();
         Banana banana = new Banana(map, "4,3");
