@@ -39,7 +39,6 @@ public class BananaTest {
     }
 
     @Test
-    @Ignore
     public void bananaCanStartAnyWhereInMap() {
         Map map = new MapBuilder("5,5").horizontalFence("1,2-4").verticalFence("3-5,2").build();
         Banana banana = new Banana(map, "4,3");
@@ -56,7 +55,6 @@ public class BananaTest {
     }
 
     @Test()
-    @Ignore
     public void bananaCanMove() throws Exception {
         Map map = new MapBuilder("5,5").horizontalFence("1,2-4").verticalFence("3-5,2").build();
         Banana banana = new Banana(map, "4,3");
@@ -74,7 +72,6 @@ public class BananaTest {
     }
 
     @Test()
-    @Ignore
     public void bananaCanTurnRightAndLeft() throws Exception {
         Map map = new MapBuilder("5,5").horizontalFence("1,2-4").verticalFence("3-5,2").build();
         Banana banana = new Banana(map, "4,3");

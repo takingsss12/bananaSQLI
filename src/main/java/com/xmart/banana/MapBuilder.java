@@ -4,6 +4,8 @@ import java.util.stream.IntStream;
 
 final class MapBuilder
 {
+  private final MapCoordinatesPositionHandler mapCoordinatesPositionHandler;
+  
 	private final MapSlot[][] mapSlots;
 	
 	MapBuilder(final String mapSize)
@@ -18,6 +20,8 @@ final class MapBuilder
 	            .mapToObj(__ -> new MapSlot())
 	            .toArray(MapSlot[]::new))
 	        .toArray(MapSlot[][]::new);
+	    
+	    mapCoordinatesPositionHandler = new DefaultMapCoordinatesPositionHandler();
 	}
 	
 	MapBuilder horizontalFence(final String horizontalFence)
@@ -50,6 +54,6 @@ final class MapBuilder
 	
 	Map build()
 	{
-		return new Map(mapSlots);
+		return new Map(mapSlots, mapCoordinatesPositionHandler);
 	}
 }

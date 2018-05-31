@@ -1,9 +1,11 @@
 package com.xmart.banana;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,6 +41,13 @@ final class MapCoordinatesRange
     );
   }
   
+  static MapCoordinatesRange ofIncrements(final int rowIncrement, final int columnIncrement)
+  {
+    final IntFunction<List<Integer>> singletonList = n -> Collections.unmodifiableList(Arrays.asList(n));
+    
+    return new MapCoordinatesRange(singletonList.apply(rowIncrement), singletonList.apply(columnIncrement));
+  }
+  
   private static List<String> matcherGroupsToList(final Matcher matcher)
   {
     return Collections.unmodifiableList(Optional.ofNullable(matcher.find())
@@ -56,6 +65,11 @@ final class MapCoordinatesRange
     return of(String.format("%s-%s,%s-%s", groups.get(0), groups.get(0), groups.get(1), groups.get(1)));
   }
   
+  static MapCoordinatesRange ofRowAndColumn(final String rowAndColumn)
+  {
+    return ofMapSize(rowAndColumn);
+  }
+  
   static MapCoordinatesRange ofHorizontalFence(final String horizontalFence)
   {
     final List<String> groups = matcherGroupsToList(Pattern.compile("(\\d+),(\\d+)-(\\d+)").matcher(horizontalFence));
@@ -68,6 +82,24 @@ final class MapCoordinatesRange
     final List<String> groups = matcherGroupsToList(Pattern.compile("(\\d+)-(\\d+),(\\d+)").matcher(verticalFence));
     
     return of(String.format("%s-%s,%s-%s", groups.get(0), groups.get(1), groups.get(2), groups.get(2)));
+  }
+  
+  static MapCoordinatesRange add(final MapCoordinatesRange first, final MapCoordinatesRange second)
+  {
+    final int left = first.getLeftRange().iterator().next() + second.getLeftRange().iterator().next();
+    
+    final int right = first.getRightRange().iterator().next() + second.getRightRange().iterator().next();
+    
+    return ofIncrements(left, right);
+  }
+  
+  static MapCoordinatesRange mult(final MapCoordinatesRange coordinates, final int factor)
+  {
+    final int left = coordinates.getLeftRange().iterator().next() * factor;
+    
+    final int right = coordinates.getRightRange().iterator().next() * factor;
+    
+    return ofIncrements(left, right);
   }
   
   private final Iterable<Integer> leftRange;
