@@ -1,6 +1,6 @@
 package com.xmart.banana;
 
-final class OutOfBoundsExeption extends Exception
+final class OutOfBoundsExeption extends RuntimeException
 {
 
   /**

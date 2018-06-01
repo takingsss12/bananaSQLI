@@ -1,6 +1,6 @@
 package com.xmart.banana;
 
-final class FenceExeption extends Exception
+final class FenceExeption extends RuntimeException
 {
 
   /**

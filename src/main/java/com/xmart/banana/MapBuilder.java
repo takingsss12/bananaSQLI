@@ -1,5 +1,7 @@
 package com.xmart.banana;
 
+import java.util.Arrays;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 final class MapBuilder
@@ -7,6 +9,10 @@ final class MapBuilder
   private final MapCoordinatesPositionHandler mapCoordinatesPositionHandler;
   
 	private final MapSlot[][] mapSlots;
+	
+	private final Map map;
+	
+	private final Supplier<? extends MapCoordinatesPositionHandler> defaultPositionHandler = DefaultMapCoordinatesPositionHandler::new;
 	
 	MapBuilder(final String mapSize)
 	{
@@ -21,7 +27,9 @@ final class MapBuilder
 	            .toArray(MapSlot[]::new))
 	        .toArray(MapSlot[][]::new);
 	    
-	    mapCoordinatesPositionHandler = new DefaultMapCoordinatesPositionHandler();
+	    mapCoordinatesPositionHandler = defaultPositionHandler.get();
+	    
+	    map = new Map(mapSlots, mapCoordinatesPositionHandler);
 	}
 	
 	MapBuilder horizontalFence(final String horizontalFence)
@@ -52,8 +60,23 @@ final class MapBuilder
 		return this;
 	}
 	
+	MapBuilder deamon(final String deamonsInitialPosition)
+	{
+    Arrays.stream(MapCoordinatesRange.ofDeamons(deamonsInitialPosition))
+        .forEach(deamonInitialPosition ->
+        {
+          final int row = deamonInitialPosition.getLeftRange().iterator().next() - 1;
+          
+          final int column = deamonInitialPosition.getRightRange().iterator().next() - 1;
+          
+          mapSlots[row][column].deamon(new Deamon(map, deamonInitialPosition, defaultPositionHandler.get()));
+        });
+	  
+	  return this;
+	}
+	
 	Map build()
 	{
-		return new Map(mapSlots, mapCoordinatesPositionHandler);
+		return map;
 	}
 }

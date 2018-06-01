@@ -8,6 +8,8 @@ final class Banana
   
   private MapCoordinatesRange currentPosition;
   
+  private boolean isDead = false;
+  
   Banana(final Map map, final String initialPosition)
   {
     this.map = map;
@@ -16,37 +18,60 @@ final class Banana
     
     currentPosition = MapCoordinatesRange.ofRowAndColumn(initialPosition);
     
-    this.map.getMapCoordinatesPositionHandler().setCurrentDirection(currentDirection);
+    this.map.getBananaCoordinatesPositionHandler().setCurrentDirection(currentDirection);
     
-    try
-    {
-      this.map.banana(this, currentPosition);
-    }
-    catch (final Exception exception)
-    {
-      
-    }
+    this.map.banana(this, currentPosition);
   }
   
-  void move(final String step) throws FenceExeption, OutOfBoundsExeption
+  private void move()
   {
     map.clear(currentPosition);
     
-    map.banana(this, currentPosition = map.getMapCoordinatesPositionHandler().getNextMapCoordinatesRange(currentPosition, Integer.parseInt(step)));
+    map.banana(this, currentPosition = map.getBananaCoordinatesPositionHandler().getNextMapCoordinatesRange(currentPosition, 1));
+  }
+  
+  private void leftImpl()
+  {
+    this.map.getBananaCoordinatesPositionHandler().setCurrentDirection(currentDirection = map.getBananaCoordinatesPositionHandler().turnLeft());
+  }
+  
+  private void rightImpl()
+  {
+    this.map.getBananaCoordinatesPositionHandler().setCurrentDirection(currentDirection = map.getBananaCoordinatesPositionHandler().turnRight());
+  }
+  
+  void move(final String step)
+  {
+    map.moveDeamons(this, Banana::move, Integer.parseInt(step));
   }
   
   void left()
   {
-    this.map.getMapCoordinatesPositionHandler().setCurrentDirection(currentDirection = map.getMapCoordinatesPositionHandler().turnLeft());
+    map.moveDeamons(this, Banana::leftImpl, 1);
   }
   
   void right()
   {
-    this.map.getMapCoordinatesPositionHandler().setCurrentDirection(currentDirection = map.getMapCoordinatesPositionHandler().turnRight());
+    map.moveDeamons(this, Banana::rightImpl, 1);
+  }
+  
+  MapCoordinatesRange position()
+  {
+    return currentPosition;
+  }
+  
+  void die()
+  {
+    isDead = true;
+  }
+  
+  boolean isDead()
+  {
+    return isDead;
   }
   
   char draw()
   {
-    return 'O';
+    return isDead ? ' ' : 'O';
   }
 }

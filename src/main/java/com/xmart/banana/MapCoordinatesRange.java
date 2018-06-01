@@ -52,6 +52,13 @@ final class MapCoordinatesRange
     return new MapCoordinatesRange(singletonList.apply(rowIncrement), singletonList.apply(columnIncrement));
   }
   
+  static MapCoordinatesRange[] ofDeamons(final String deamonsInitialPosition)
+  {
+    return Arrays.stream(deamonsInitialPosition.split("-"))
+        .map(MapCoordinatesRange::ofMapSize)
+        .toArray(MapCoordinatesRange[]::new);
+  }
+  
   private static List<String> matcherGroupsToList(final Matcher matcher)
   {
     return Collections.unmodifiableList(Optional.ofNullable(matcher.find())
@@ -132,12 +139,62 @@ final class MapCoordinatesRange
             .apply(StreamSupport.stream(iterable.spliterator(), false), Comparator.naturalOrder())
             .get();
 
-    final boolean validRows = boundaryElement.applyAsInt(getLeftRange(), Stream::min) >= 0
+    final boolean validRows = boundaryElement.applyAsInt(getLeftRange(), Stream::min) >= 1
         && boundaryElement.applyAsInt(getLeftRange(), Stream::max) <= rows;
 
-    final boolean validColumns = boundaryElement.applyAsInt(getRightRange(), Stream::min) >= 0
+    final boolean validColumns = boundaryElement.applyAsInt(getRightRange(), Stream::min) >= 1
         && boundaryElement.applyAsInt(getRightRange(), Stream::max) <= columns;
 
     return validRows && validColumns;
+  }
+  
+  MapCoordinatesRange[] neighbors()
+  {
+    final int row = getLeftRange().iterator().next();
+    
+    final int column = getRightRange().iterator().next();
+    
+    return new MapCoordinatesRange[]
+    {
+        ofIncrements(row, column - 1),
+        ofIncrements(row, column + 1),
+        ofIncrements(row - 1, column),
+        ofIncrements(row + 1, column)
+    };
+  }
+
+  @Override
+  public int hashCode()
+  {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((leftRange == null) ? 0 : leftRange.hashCode());
+    result = prime * result + ((rightRange == null) ? 0 : rightRange.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    MapCoordinatesRange other = (MapCoordinatesRange) obj;
+    if (leftRange == null)
+    {
+      if (other.leftRange != null)
+        return false;
+    } else if (!leftRange.equals(other.leftRange))
+      return false;
+    if (rightRange == null)
+    {
+      if (other.rightRange != null)
+        return false;
+    } else if (!rightRange.equals(other.rightRange))
+      return false;
+    return true;
   }
 }

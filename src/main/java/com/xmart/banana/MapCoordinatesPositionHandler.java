@@ -1,5 +1,8 @@
 package com.xmart.banana;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 interface MapCoordinatesPositionHandler
 {
   enum Direction
@@ -19,6 +22,18 @@ interface MapCoordinatesPositionHandler
     MapCoordinatesRange getIncrement()
     {
       return increment;
+    }
+    
+    boolean canReach(final MapCoordinatesRange target, final int limit)
+    {
+      return Stream.iterate(getIncrement(), previous -> MapCoordinatesRange.add(previous, getIncrement()))
+          .limit(limit)
+          .anyMatch(target::equals);
+    }
+    
+    boolean isHorizontal()
+    {
+      return Arrays.asList(RIGHT, LEFT).contains(this);
     }
   }
   

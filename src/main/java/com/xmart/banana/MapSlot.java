@@ -8,11 +8,15 @@ final class MapSlot
   
   private Optional<Banana> banana;
   
+  private Optional<Deamon> deamon;
+  
   MapSlot()
   {
     fence = Optional.empty();
     
     banana = Optional.empty();
+    
+    deamon = Optional.empty();
   }
   
   void fence(final Fence fence)
@@ -20,9 +24,14 @@ final class MapSlot
     this.fence = Optional.of(fence);
   }
   
-  void banana(final Banana banana) throws FenceExeption
+  boolean isFenced()
   {
-    if (fence.isPresent())
+    return fence.isPresent();
+  }
+  
+  void banana(final Banana banana)
+  {
+    if (isFenced())
     {
       throw new FenceExeption();
     }
@@ -30,13 +39,37 @@ final class MapSlot
     this.banana = Optional.of(banana);
   }
   
+  void killBanana()
+  {
+    banana.ifPresent(Banana::die);
+  }
+  
+  void deamon(final Deamon deamon)
+  {
+    this.deamon = Optional.of(deamon);
+  }
+  
+  boolean isDeamonIn()
+  {
+    return deamon.isPresent();
+  }
+  
+  public Deamon getDeamon()
+  {
+    return deamon.get();
+  }
+  
   void clear()
   {
     banana = Optional.empty();
+    deamon = Optional.empty();
   }
   
   char draw()
   {
-    return fence.map(Fence::draw).orElse(banana.map(Banana::draw).orElse(' '));
+    return fence.map(Fence::draw)
+        .orElse(banana.map(Banana::draw)
+            .orElse(deamon.map(Deamon::draw)
+                .orElse(' ')));
   }
 }
