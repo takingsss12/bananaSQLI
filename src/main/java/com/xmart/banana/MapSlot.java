@@ -39,9 +39,15 @@ final class MapSlot
     this.banana = Optional.of(banana);
   }
   
-  void killBanana()
+  boolean killBanana()
   {
-    banana.ifPresent(Banana::die);
+    if (banana.isPresent())
+    {
+      banana.get().die();
+      return true;
+    }
+    
+    return false;
   }
   
   void deamon(final Deamon deamon)

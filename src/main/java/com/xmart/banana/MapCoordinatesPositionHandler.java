@@ -19,19 +19,19 @@ interface MapCoordinatesPositionHandler
       this.increment = increment;
     }
     
-    MapCoordinatesRange getIncrement()
+    final MapCoordinatesRange getIncrement()
     {
       return increment;
     }
     
-    boolean canReach(final MapCoordinatesRange target, final int limit)
+    final boolean canReach(final MapCoordinatesRange source, final MapCoordinatesRange target, final int limit)
     {
-      return Stream.iterate(getIncrement(), previous -> MapCoordinatesRange.add(previous, getIncrement()))
+      return Stream.iterate(source, previous -> MapCoordinatesRange.add(previous, getIncrement()))
           .limit(limit)
           .anyMatch(target::equals);
     }
     
-    boolean isHorizontal()
+    final boolean isHorizontal()
     {
       return Arrays.asList(RIGHT, LEFT).contains(this);
     }

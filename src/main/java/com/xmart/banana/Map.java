@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -112,34 +113,44 @@ final class Map
     
     final Deamon[] deamons = deamons();
     
-    final BiConsumer<Runnable, Runnable> repeatMoveAction = (moveAction1, moveAction2) ->
+    final BiConsumer<Supplier<Boolean>, Supplier<Boolean>> repeatMoveAction = (moveAction1, moveAction2) ->
     {
       IntStream.range(0, bananaMoveStep)
           .forEach(__ ->
           {
-            moveAction1.run();
-            moveAction2.run();
+            if (moveAction1.get())
+            {
+              moveAction2.get();
+            }
           });
     };
     
-    final Runnable deamonsMoveAction = () ->
+    final Supplier<Boolean> wrappedBananaMoveAction = () ->
     {
-      Arrays.stream(deamons)
-        .forEach(deamon -> deamon.move(banana));
+      bananaMoveAction.accept(banana);
+      
+      return true;
+    };
+    
+    final Supplier<Boolean> deamonsMoveAction = () ->
+    {
+      return Arrays.stream(deamons)
+        .map(deamon -> deamon.move(banana))
+        .reduce(true, (accumulation, value) -> value && accumulation);
     };
     
     if (Arrays.stream(deamons).anyMatch(deamon -> deamon.canSeeBanana(banana.position())))
     {
-      repeatMoveAction.accept(deamonsMoveAction, () -> bananaMoveAction.accept(banana));
+      repeatMoveAction.accept(deamonsMoveAction, wrappedBananaMoveAction);
     }
     else
     {
-      repeatMoveAction.accept(() -> bananaMoveAction.accept(banana), deamonsMoveAction);
+      repeatMoveAction.accept(wrappedBananaMoveAction, deamonsMoveAction);
     }
   }
   
-  void killBanana(final MapCoordinatesRange position)
+  boolean killBanana(final MapCoordinatesRange position)
   {
-    getSlot(position).killBanana();
+    return getSlot(position).killBanana();
   }
 }

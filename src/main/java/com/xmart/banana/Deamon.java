@@ -1,6 +1,7 @@
 package com.xmart.banana;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 final class Deamon
 {
@@ -47,12 +48,7 @@ final class Deamon
     return false;
   }
   
-  MapCoordinatesPositionHandler.Direction faceBanana(final MapCoordinatesRange bananaPosition)
-  {
-    return null;
-  }
-  
-  void move(final Banana banana)
+  boolean move(final Banana banana)
   {
     final Runnable moveAction = () ->
     {
@@ -63,9 +59,18 @@ final class Deamon
       map.deamon(this, currentPosition);
     };
     
+    if (Arrays.stream(currentPosition.neighbors())
+        .filter(neighbor -> neighbor.isWithin(map.rows(), map.columns()))
+        .anyMatch(map::killBanana))
+    {
+      return false;
+    }
+    
     if (!canSeeBanana(banana.position()))
     {
-      if (map.isFenced(MapCoordinatesRange.add(currentPosition, currentDirection.getIncrement())))
+      final MapCoordinatesRange nextPosition = MapCoordinatesRange.add(currentPosition, currentDirection.getIncrement());
+      
+      if (!nextPosition.isWithin(map.rows(), map.columns()) || map.isFenced(nextPosition))
       {
         positionHandler.setCurrentDirection(currentDirection = positionHandler.turnRight());
       }
@@ -76,19 +81,33 @@ final class Deamon
     }
     else
     {
-      if (currentDirection.canReach(banana.position(), currentDirection.isHorizontal() ? map.columns() : map.rows()))
+      Predicate<MapCoordinatesPositionHandler.Direction> canReach = direction -> direction.canReach(
+          currentPosition,
+          banana.position(),
+          direction.isHorizontal() ? map.columns() : map.rows()
+      );
+      
+      if (canReach.test(currentDirection))
       {
         moveAction.run();
       }
+      else if (canReach.test(currentDirection = positionHandler.turnRight()))
+      {
+        
+      }
+      else if(canReach.test(currentDirection = positionHandler.turnLeft()))
+      {
+        
+      }
       else
       {
-        positionHandler.setCurrentDirection(currentDirection = faceBanana(banana.position()));
+        currentDirection = positionHandler.turnRight();
       }
+      
+      positionHandler.setCurrentDirection(currentDirection);
     }
     
-    Arrays.stream(currentPosition.neighbors())
-        .filter(neighbor -> neighbor.isWithin(map.rows(), map.columns()))
-        .forEach(map::killBanana);
+    return true;
   }
   
   char draw()

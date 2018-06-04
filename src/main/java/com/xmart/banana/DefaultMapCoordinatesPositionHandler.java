@@ -26,7 +26,7 @@ final class DefaultMapCoordinatesPositionHandler implements MapCoordinatesPositi
   
   private MapCoordinatesPositionHandler.Direction turn(final IntUnaryOperator nextIndex, final IntPredicate isValidNextIndex, final int validIndexIfNot)
   {
-    return currentDirection = directionsAsList.get(
+    return directionsAsList.get(
         Optional.of(nextIndex.applyAsInt(directionsAsList.indexOf(currentDirection)))
             .filter(isValidNextIndex::test)
             .orElse(validIndexIfNot)
