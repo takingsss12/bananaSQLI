@@ -5,6 +5,8 @@ import java.util.function.Predicate;
 
 final class Deamon
 {
+  private boolean isDead;
+  
   private final Map map;
   
   private MapCoordinatesRange currentPosition;
@@ -15,6 +17,8 @@ final class Deamon
   
   Deamon(Map map, MapCoordinatesRange currentPosition, MapCoordinatesPositionHandler positionHandler)
   {
+    isDead = false;
+    
     this.map = map;
     
     this.currentPosition = currentPosition;
@@ -58,6 +62,11 @@ final class Deamon
       
       map.deamon(this, currentPosition);
     };
+    
+    if (isDead)
+    {
+      return true;
+    }
     
     if (Arrays.stream(currentPosition.neighbors())
         .filter(neighbor -> neighbor.isWithin(map.rows(), map.columns()))
@@ -108,6 +117,11 @@ final class Deamon
     }
     
     return true;
+  }
+  
+  void die()
+  {
+    isDead = true;
   }
   
   char draw()

@@ -95,6 +95,11 @@ final class MapCoordinatesRange
     return of(String.format("%s-%s,%s-%s", groups.get(0), groups.get(1), groups.get(2), groups.get(2)));
   }
   
+  static MapCoordinatesRange ofBonus(final String bonusPosition)
+  {
+    return ofRowAndColumn(bonusPosition.replace('-', ','));
+  }
+  
   static MapCoordinatesRange add(final MapCoordinatesRange first, final MapCoordinatesRange second)
   {
     final int left = first.getLeftRange().iterator().next() + second.getLeftRange().iterator().next();

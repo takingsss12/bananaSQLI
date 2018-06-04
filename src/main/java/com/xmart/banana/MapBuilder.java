@@ -1,6 +1,7 @@
 package com.xmart.banana;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -30,6 +31,15 @@ final class MapBuilder
 	    mapCoordinatesPositionHandler = defaultPositionHandler.get();
 	    
 	    map = new Map(mapSlots, mapCoordinatesPositionHandler);
+	}
+	
+	void setMapSlot(final MapCoordinatesRange mapSlotPosition, final Consumer<MapSlot> action)
+	{
+	  final int row = mapSlotPosition.getLeftRange().iterator().next() - 1;
+    
+    final int column = mapSlotPosition.getRightRange().iterator().next() - 1;
+    
+    action.accept(mapSlots[row][column]);
 	}
 	
 	MapBuilder horizontalFence(final String horizontalFence)
@@ -65,15 +75,28 @@ final class MapBuilder
     Arrays.stream(MapCoordinatesRange.ofDeamons(deamonsInitialPosition))
         .forEach(deamonInitialPosition ->
         {
-          final int row = deamonInitialPosition.getLeftRange().iterator().next() - 1;
-          
-          final int column = deamonInitialPosition.getRightRange().iterator().next() - 1;
-          
-          mapSlots[row][column].deamon(new Deamon(map, deamonInitialPosition, defaultPositionHandler.get()));
+          setMapSlot(deamonInitialPosition, mapSlot -> mapSlot.deamon(new Deamon(map, deamonInitialPosition, defaultPositionHandler.get())));
         });
 	  
 	  return this;
 	}
+	
+	private MapBuilder bonus(final String bonusPosition, final Supplier<? extends Bonus> bonusSupplier)
+  {
+    setMapSlot(MapCoordinatesRange.ofBonus(bonusPosition), mapSlot -> mapSlot.bonus(bonusSupplier.get()));
+    
+    return this;
+  }
+	
+	MapBuilder freezer(final String freezerPosition)
+	{
+	  return bonus(freezerPosition, Freezer::new);
+	}
+	
+	MapBuilder enhancer(final String enhancerPosition)
+  {
+    return bonus(enhancerPosition, Enhancer::new);
+  }
 	
 	Map build()
 	{

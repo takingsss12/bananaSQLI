@@ -1,5 +1,7 @@
 package com.xmart.banana;
 
+import java.util.Arrays;
+
 final class Banana
 {
   private final Map map;
@@ -21,6 +23,13 @@ final class Banana
     this.map.getBananaCoordinatesPositionHandler().setCurrentDirection(currentDirection);
     
     this.map.banana(this, currentPosition);
+  }
+  
+  void killAdjacentDeamons()
+  {
+    map.killDeamons(Arrays.stream(currentPosition.neighbors())
+        .filter(position -> position.isWithin(map.rows(), map.columns()))
+        .toArray(MapCoordinatesRange[]::new));
   }
   
   private void move()

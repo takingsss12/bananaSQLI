@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -104,6 +105,13 @@ final class Map
     return getSlot(position).isFenced();
   }
   
+  private boolean slotsNoneMatch(final Predicate<MapSlot> predicate)
+  {
+    return Arrays.stream(slots)
+        .flatMap(Arrays::stream)
+        .noneMatch(predicate);    
+  }
+  
   void moveDeamons(final Banana banana, final Consumer<Banana> bananaMoveAction, final int bananaMoveStep)
   {
     if (banana.isDead())
@@ -129,14 +137,24 @@ final class Map
     {
       bananaMoveAction.accept(banana);
       
+      if (!slotsNoneMatch(MapSlot::triggerEnhancer))
+      {
+        banana.killAdjacentDeamons();
+      }
+      
       return true;
     };
     
     final Supplier<Boolean> deamonsMoveAction = () ->
     {
-      return Arrays.stream(deamons)
-        .map(deamon -> deamon.move(banana))
-        .reduce(true, (accumulation, value) -> value && accumulation);
+      if (slotsNoneMatch(MapSlot::triggerFreezer))
+      {
+        return Arrays.stream(deamons)
+            .map(deamon -> deamon.move(banana))
+            .reduce(true, (accumulation, value) -> value && accumulation);
+      }
+
+      return true;
     };
     
     if (Arrays.stream(deamons).anyMatch(deamon -> deamon.canSeeBanana(banana.position())))
@@ -152,5 +170,14 @@ final class Map
   boolean killBanana(final MapCoordinatesRange position)
   {
     return getSlot(position).killBanana();
+  }
+  
+  void killDeamons(final MapCoordinatesRange[] positions)
+  {
+    Arrays.stream(positions)
+        .map(this::getSlot)
+        .filter(MapSlot::isDeamonIn)
+        .map(MapSlot::getDeamon)
+        .forEach(Deamon::die);
   }
 }
