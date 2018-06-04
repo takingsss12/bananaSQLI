@@ -1,9 +1,10 @@
 package com.xmart.banana;
 
-import org.junit.Test;
-
+import static com.xmart.banana.Map.LINE_SEPARATOR;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 public class BananaTest {
     @Test
@@ -241,7 +242,7 @@ public class BananaTest {
                 .append("---------").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
-                .append("|O       |").append(LINE_SEPARATOR)
+                .append("|O      |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
                 .append("|       |").append(LINE_SEPARATOR)
